@@ -1,7 +1,14 @@
 ## Git
 ### Added
 - SC2327/SC2328: Warn about capturing the output of redirected commands.
+- SC2329: Warn when (non-escaping) functions are never invoked.
+- SC2330: Warn about unsupported glob matches with [[ .. ]] in BusyBox.
+- Precompiled binaries for Linux riscv64 (linux.riscv64)
+### Changed
+- SC2015 about `A && B || C` no longer triggers when B is a test command.
 ### Fixed
+- SC2317 about unreachable commands is now less spammy for nested ones.
+- SC2292, optional suggestion for [[ ]], now triggers for Busybox.
 
 
 ## v0.10.0 - 2024-03-07
