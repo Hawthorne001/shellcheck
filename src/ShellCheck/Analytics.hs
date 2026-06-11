@@ -2069,6 +2069,8 @@ prop_subshellAssignmentCheck20 = verifyTree subshellAssignmentCheck "@test 'foo'
 prop_subshellAssignmentCheck21 = verifyNotTree subshellAssignmentCheck "test1() { echo foo | if [[ $var ]]; then echo $var; fi; }; test2() { echo $var; }"
 prop_subshellAssignmentCheck22 = verifyNotTree subshellAssignmentCheck "( [[ -n $foo || -z $bar ]] ); echo $foo $bar"
 prop_subshellAssignmentCheck23 = verifyNotTree subshellAssignmentCheck "( export foo ); echo $foo"
+prop_subshellAssignmentCheck24 = verifyNotTree subshellAssignmentCheck "( read -r a _ c <<< 'x y z'; ); echo $_"
+prop_subshellAssignmentCheck25 = verifyNotTree subshellAssignmentCheck "( _=discard; ); echo $_"
 subshellAssignmentCheck params t =
     let flow = variableFlow params
         check = findSubshelled flow [("oops",[])] Map.empty
@@ -2090,7 +2092,7 @@ findSubshelled (Reference (_, readToken, str):rest) scopes deadVars = do
     findSubshelled rest scopes deadVars
   where
     shouldIgnore str =
-        str `elem` ["@", "*", "IFS"]
+        str `elem` ["@", "*", "_", "IFS"]
 
 findSubshelled (StackScope (SubshellScope reason):rest) scopes deadVars =
     findSubshelled rest ((reason,[]):scopes) deadVars
