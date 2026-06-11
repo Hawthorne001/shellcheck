@@ -225,10 +225,13 @@ process :: [Flag] -> [FilePath] -> ExceptT Status IO Status
 process flags files = do
     options <- foldM (flip parseOption) defaultOptions flags
 
-    extra <- fmap concat $ mapM readFilesFrom (getOptions flags "files-from")
+    let filesFrom = getOptions flags "files-from"
+    extra <- fmap concat $ mapM readFilesFrom filesFrom
     let allFiles = extra ++ files
 
-    verifyFiles allFiles
+    -- It shouldn't be an error to do --files-from=/dev/null
+    when (null filesFrom) $
+        verifyFiles allFiles
 
     let format = fromMaybe "tty" $ getOption flags "format"
     let formatters = formats $ formatterOptions options
